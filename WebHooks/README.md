@@ -7,12 +7,12 @@ The [payload.json](payload.json) file provides an example of the JSON payload yo
 The first attribute is the **intentName** attribute. The intentName attribute is simply that, the name of the intent that you created in the platform that you've triggered to use your endpoint.
 
 The second is the **memoryVariables** attribute. This contains the entity variables that your intent has captured, with some extra information. It will tell you the:  
-** currentValue** - The current value held by the variable.  
-** isMandatory** - Whether this variable was mandatory.  
-** entityKeys** - The possible values that this variable could have, including the current value.  
-** prompts** - The prompts used to ascertain this value.  
-** timesPrompted** - The number of times the user was prompted to capture the value.  
-** timesToPrompt** - The maximum number of times to prompt the user.  
+**currentValue** - The current value held by the variable.  
+**isMandatory** - Whether this variable was mandatory.  
+**entityKeys** - The possible values that this variable could have, including the current value.  
+**prompts** - The prompts used to ascertain this value.  
+**timesPrompted** - The number of times the user was prompted to capture the value.  
+**timesToPrompt** - The maximum number of times to prompt the user.  
 
 The third is the **chatResult** attribute. We'll go into further detail in the future about the attributes of this, but the key one you may be interested in is:  
 ** query** - What the user has said to prompt this call.
