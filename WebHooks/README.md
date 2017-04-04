@@ -15,7 +15,7 @@ The second is the **memoryVariables** attribute. This contains the entity variab
 **timesToPrompt** - The maximum number of times to prompt the user.  
 
 The third is the **chatResult** attribute. We'll go into further detail in the future about the attributes of this, but the key one you may be interested in is:  
-** query** - What the user has said to prompt this call.
+**query** - What the user has said to prompt this call.
 
 ## The Response
 Currently, the response you must return is very simple, as demonstrated in [response.json](response.json). It requires a JSON response, that takes a single attribute, **text**, which is the text response you want to return to the user. If this is left blank, it will default to one of the responses specified in the intent.
