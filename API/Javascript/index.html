@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="http://fonts.googleapis.com/css?family=Arimo:400italic,400,700italic,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="ai.css">
+</head>
+
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#" id="reset-button">Reset</a>
+                    </li>
+                    <li class="active"><a href="#" id="about-button">About</a>
+                    </li>
+                    <li>
+                        <h2 class="talk-to-hal">Talk to HAL</h2>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div id="chat-so-far" class="gap-above">
+        </div>
+
+        <form action="#" method="get" id="chat_form">
+            <div class="form-group gap-above">
+                <label for="chat_question">Speak, human</label>
+                <input type="text" class="form-control" id="chat_question">
+            </div>
+        </form>
+
+    </div>
+    <!-- /.container -->
+</body>
+<script>
+    // store the id between lines of chat text
+    var chatId = '';
+
+    // pass the history back to the server for context
+    var chatHistory = '';
+
+    // create a new speech bubble
+    function createContent(text, panelType) {
+
+        var panelClass = '';
+        switch (panelType) {
+            case "question":
+                panelClass = "bubble";
+                break;
+            case "answer":
+                panelClass = "reply";
+                break;
+            default:
+                panelClass = "message";
+                break;
+        }
+
+        // create the speech bubble
+        var create = '<div class="' + panelClass + '">' + text + '</div>';
+        $(create).appendTo($('#chat-so-far')).hide().slideDown("fast");
+
+        // keep the input bar in view
+        var thePage = $('html,body');
+        thePage.animate({
+            scrollTop: thePage.prop("scrollHeight")
+        }, 1000);
+    }
+
+    // react to incoming responses
+    function chatResponse(data) {
+        chatId = data.chatId;
+        chatHistory = data.result.history;
+        createContent(data.result.answer, "answer");
+    }
+
+    $(document).ready(function() {
+
+        $('#reset-button').click(function(target) {
+
+            // ditch the chatid to start a new conversation
+            if (chatId != '') {
+                createContent("The chat context has been reset", "message");
+            }
+            chatId = '';
+        });
+
+       $('#about-button').click(function(target) {
+            createContent("<a href=\"http://www.hutoma.com/\" target=\"other\">hu:toma</a> meets <a href=\"https://en.wikipedia.org/wiki/HAL_9000\" target=\"other\">HAL 9000</a>");
+        });
+
+        $('#chat_form').bind('submit', function(event) {
+
+            // use the client key
+            var auth = 'ADD_YOUR_CLIENT_KEY_HERE';
+
+            // the id of the ai we are talking to
+            var aiid = 'ADD_YOUR_AIID_HERE';
+
+            // the question
+            var question = $('#chat_question').val();
+
+            // the http parameters
+            var data = {
+                'q': question,
+                'history': chatHistory,
+                'chatId': chatId
+            };
+
+            // create a speech bubble with the question
+            createContent(question, "question");
+            // clear the input text so that the user can keep typing
+            $('#chat_form input').val('').blur().focus();
+
+            // make the ajax call
+            $.ajax({
+                url: 'https://api.hutoma.com/v1/ai/' + aiid + '/chat',
+                type: "GET",
+                data: data,
+                headers: {
+                    "Authorization": "Bearer " + auth
+                },
+                dataType: "json",
+                success: chatResponse,
+                error: function(jqXHR, textStatus, error) {
+                    // an empty error means that we didn't connect correctly to the server
+                    if (error == "") {
+                        createContent("Error connecting to AI", "message");
+                    } else {
+                        // otherwise we have a JSON error from the server
+                        createContent(jqXHR.responseJSON.status.code + ": " + jqXHR.responseJSON.status.info, "message");
+                    }
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+
+</html>
