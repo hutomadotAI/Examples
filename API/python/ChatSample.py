@@ -40,9 +40,9 @@ class ChatResponse:
 
 
 # chat API call
-def chat(apiRoot, auth, aiid, sayWhat, history="", chatID=""):
+def chat(apiRoot, auth, aiid, sayWhat, chatID=""):
     # build the query
-    query = {'q': sayWhat, 'chat_history': history}
+    query = {'q': sayWhat}
     if chatID != "":
         query['chatId'] = chatID
     # add the auth header
@@ -51,19 +51,17 @@ def chat(apiRoot, auth, aiid, sayWhat, history="", chatID=""):
     return ChatResponse(requests.get(apiRoot + "ai/" + aiid + "/chat", params=query, headers=headers))
 
 
-# history and chatId are stored between calls to keep track of the conversation
-history = ""
+# chatId is stored between calls to keep track of the conversation
 chatId = ""
 
 while True:
     # user input
     q = input("Human: ")
     # make the http call
-    chatResponse = chat(apiRoot, auth, aiId, q, history=history, chatID=chatId)
-    # if the call succeeded then print the answer and store the history/chatId
+    chatResponse = chat(apiRoot, auth, aiId, q, chatID=chatId)
+    # if the call succeeded then print the answer and store the chatId
     if chatResponse.success:
         print("Ai: ", chatResponse.response["result"]["answer"])
-        history = chatResponse.response["result"]["history"]
         chatId = chatResponse.response["chatId"]
     else:
         # otherwise, tell the user what went wrong and exit

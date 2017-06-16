@@ -48,9 +48,6 @@
     // store the id between lines of chat text
     var chatId = '';
 
-    // pass the history back to the server for context
-    var chatHistory = '';
-
     // create a new speech bubble
     function createContent(text, panelType) {
 
@@ -81,7 +78,6 @@
     // react to incoming responses
     function chatResponse(data) {
         chatId = data.chatId;
-        chatHistory = data.result.history;
         createContent(data.result.answer, "answer");
     }
 
@@ -114,7 +110,6 @@
             // the http parameters
             var data = {
                 'q': question,
-                'history': chatHistory,
                 'chatId': chatId
             };
 

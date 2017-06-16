@@ -34,9 +34,6 @@ public class Chat {
     // tracks the current chat
     private String chatId = "";
 
-    // history needs to be tracked and returned to the chat server
-    private String history = "";
-
     public static void main(String[] args) {
         new Chat().inputLoop();
     }
@@ -55,7 +52,7 @@ public class Chat {
                 String input = scanner.nextLine();
 
                 // generate a URL with this data
-                URL url = prepareUrl(apiRoot, aiId, input, this.chatId, this.history);
+                URL url = prepareUrl(apiRoot, aiId, input, this.chatId);
 
                 // create a new connection
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -81,9 +78,8 @@ public class Chat {
                         System.out.print("AI:");
                         System.out.println(result.getResult().getAnswer());
 
-                        // keep track of the chatID and history for the next line of text
+                        // keep track of the chatID for the next line of text
                         this.chatId = result.getChatId();
-                        this.history = result.getResult().getHistory();
                     } else {
 
                         // otherwise all we have is a Result with a Status object (no ChatResult)
@@ -122,16 +118,14 @@ public class Chat {
      * @param aiId the ID for this AI
      * @param question the plaintext question to ask
      * @param chatId the ID of the conversation, or empty string to start a new one
-     * @param history history passed back from the last chat, or empty string if there was none
      * @return formatted URL as a string
      * @throws UnsupportedEncodingException
      * @throws MalformedURLException
      */
-    private URL prepareUrl(String apiRoot, String aiId, String question, String chatId, String history) throws UnsupportedEncodingException, MalformedURLException {
-        String query = String.format("q=%s&chatId=%s&history=%s",
+    private URL prepareUrl(String apiRoot, String aiId, String question, String chatId) throws UnsupportedEncodingException, MalformedURLException {
+        String query = String.format("q=%s&chatId=%s",
                 URLEncoder.encode(question, encoding),
-                URLEncoder.encode(chatId, encoding),
-                URLEncoder.encode(history, encoding));
+                URLEncoder.encode(chatId, encoding));
         String url = String.format("%s/ai/%s/chat?%s",
                 apiRoot, aiId, query);
         return new URL(url);
