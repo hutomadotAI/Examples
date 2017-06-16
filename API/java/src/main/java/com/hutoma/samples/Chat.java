@@ -123,9 +123,9 @@ public class Chat {
      * @throws MalformedURLException
      */
     private URL prepareUrl(String apiRoot, String aiId, String question, String chatId) throws UnsupportedEncodingException, MalformedURLException {
-        String query = String.format("q=%s&chatId=%s&",
+        String query = String.format("q=%s&chatId=%s",
                 URLEncoder.encode(question, encoding),
-                URLEncoder.encode(chatId, encoding)));
+                URLEncoder.encode(chatId, encoding));
         String url = String.format("%s/ai/%s/chat?%s",
                 apiRoot, aiId, query);
         return new URL(url);
