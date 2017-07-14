@@ -1,3 +1,4 @@
+import argparse
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
 import json
@@ -54,4 +55,9 @@ class getWeather(Resource):
 api.add_resource(getWeather, '/getWeather')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, port=5678)
+    PARSER = argparse.ArgumentParser(description='Weather bot launcher')
+    PARSER.add_argument('--port', help='port to serve on', type=int,
+                        default=5000)
+    
+    BUILD_ARGS = PARSER.parse_args()
+    app.run(host='0.0.0.0', debug=True, port=BUILD_ARGS.port)

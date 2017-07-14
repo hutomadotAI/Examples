@@ -42,7 +42,7 @@ class HelloWorld(Resource):
 api.add_resource(HelloWorld, '/')
 
 if __name__ == "__main__":
-    PARSER = argparse.ArgumentParser(description='Webhook deployment')
+    PARSER = argparse.ArgumentParser(description='Example bot launcher')
     PARSER.add_argument('--port', help='port to serve on', type=int,
                         default=5000)
     
