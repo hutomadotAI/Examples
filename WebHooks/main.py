@@ -1,3 +1,4 @@
+import argparse
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
 
@@ -41,4 +42,9 @@ class HelloWorld(Resource):
 api.add_resource(HelloWorld, '/')
 
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', debug=True, port=80)
+    PARSER = argparse.ArgumentParser(description='Webhook deployment')
+    PARSER.add_argument('--port', help='port to serve on', type=int,
+                        default=5000)
+    
+    BUILD_ARGS = PARSER.parse_args()
+    app.run(host='0.0.0.0', debug=True, port=BUILD_ARGS.port)
