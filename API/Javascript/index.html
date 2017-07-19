@@ -93,7 +93,7 @@
         });
 
        $('#about-button').click(function(target) {
-            createContent("<a href=\"http://www.hutoma.com/\" target=\"other\">hu:toma</a> meets <a href=\"https://en.wikipedia.org/wiki/HAL_9000\" target=\"other\">HAL 9000</a>");
+            createContent("<a href=\"http://www.hutoma.ai/\" target=\"other\">hu:toma</a> meets <a href=\"https://en.wikipedia.org/wiki/HAL_9000\" target=\"other\">HAL 9000</a>");
         });
 
         $('#chat_form').bind('submit', function(event) {
@@ -120,7 +120,7 @@
 
             // make the ajax call
             $.ajax({
-                url: 'https://api.hutoma.com/v1/ai/' + aiid + '/chat',
+                url: 'https://api.hutoma.ai/v1/ai/' + aiid + '/chat',
                 type: "GET",
                 data: data,
                 headers: {
