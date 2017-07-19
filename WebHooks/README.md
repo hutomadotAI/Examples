@@ -43,7 +43,7 @@ The first attribute is the **intentName** attribute. The intentName attribute is
 The second is the **variablesMap** attribute. This contains a dictionary of entity variables that your intent has captured, with some extra information. It will tell you the:  
 **value** - The current value held by the variable.  
 **mandatory** - Whether this variable was mandatory.  
-**entityKeys** - The possible values that this variable could have, including the current value.  
+**entity_keys** - The possible values that this variable could have, including the current value.  
 **prompts** - The prompts used to ascertain this value.  
 **times_prompted** - The number of times the user was prompted to capture the value.  
 **max_prompts** - The maximum number of times to prompt the user.  
