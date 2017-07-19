@@ -3,7 +3,7 @@ from json import JSONDecodeError
 import requests
 
 # where to find the API
-apiRoot = "https://api.hutoma.com/v1/"
+apiRoot = "https://api.hutoma.ai/v1/"
 
 # Your Client Key
 # This can be found in the AI setting page

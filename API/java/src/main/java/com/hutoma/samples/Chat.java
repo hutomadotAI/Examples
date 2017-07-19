@@ -20,7 +20,7 @@ public class Chat {
 
     static String encoding = java.nio.charset.StandardCharsets.UTF_8.name();
 
-    static String apiRoot = "https://api.hutoma.com/v1";
+    static String apiRoot = "https://api.hutoma.ai/v1";
 
     // id of the AI that we want to talk to
     static String aiId = "ADD_YOUR_CLIENT_KEY_HERE";
