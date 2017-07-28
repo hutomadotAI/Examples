@@ -1,44 +1,76 @@
-from flask import Flask
-from flask_restful import Resource, Api, reqparse
+"""Sample webhook in Python 2.7, demonstrating how to check signature and get data"""
+import argparse
+import hmac
+import hashlib
 
-app = Flask(__name__)
-api = Api(app)
+# Use Flask framework
+from flask import Flask, request
+from flask_restful import Resource, Api
 
-# Use RequestParser to pull out the intentName, memoryVariables and chatResult.
-parser = reqparse.RequestParser()
-parser.add_argument('intentName')
-parser.add_argument('memoryVariables', type=dict, action='append')
-parser.add_argument('chatResult', type=dict)
+class ColourBot(Resource):
+    """Simple webhook Flask class"""
+    def __init__(self):
+        """The HMAC secret"""
+        self.hmac_key = PARSER_ARGS.hmac_key
 
-class HelloWorld(Resource):
-    # This recieves requests that use the POST method.
     def post(self):
-        # Uses the request parser to extract what we want from the JSON.
-        args = parser.parse_args()
-        intent = str(args['intentName'])
-        variables = args['memoryVariables']
+        """This receives requests that use the POST method."""
+        json_data = request.get_json()
+        headers = request.headers
+        if self.hmac_key:
+            try:
+                # check for X-Hub-Signature (only HTTPS)
+                x_hub_signature = headers['X-Hub-Signature']
+                # signature is always HMAC SHA256
+                hash_sent = x_hub_signature.replace("sha256=", "").strip()
+            except KeyError:
+                print("No signature sent")
+            else:
+                data_bytes = request.get_data("utf8")
+                hasher = hmac.new(self.hmac_key, digestmod=hashlib.sha256)
+                hasher.update(data_bytes)
+                hex_digest = hasher.hexdigest()
+                if not hex_digest == hash_sent:
+                    # signature mismatch, return HTTP 400 error
+                    return "invalid signature", 400
+                else:
+                    print ("Signatures match")
 
-        # Captures the first variable and it's currentValue.
-        colourVariable = variables[0]
-        colour = colourVariable['currentValue']
+        intent = json_data['intentName']
+        variables = json_data['variablesMap']
 
-        # A default answer if we don't have an option for that value.
-        result = "I don't recognise that colour."
+        # Captures the variable labelled 'colour' and its value.
+        colour_variable = variables['colour']
+        colour = colour_variable['value']
 
         # Set the response text based on the colour currentValue.
-        if colour is "red":
+        if colour == "red":
             result = "Red is the same colour as a Strawberry."
-        elif colour is "green":
+        elif colour == "green":
             result = "Green is the colour of the grass."
-        elif colour is "blue":
+        elif colour == "blue":
             result = "Blue is the colour of the sky."
-        elif result is "yellow":
+        elif colour == "yellow":
             result = "Yellow is the colour of the sun."
+        else:
+            # A default answer if we don't have an option for that value.
+            result = "I don't recognise that colour."
 
         # The response in the form {"text": "_ is the colour of _."} and an OK.
         return {"text": result}, 200
 
-api.add_resource(HelloWorld, '/')
 
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', debug=True, port=80)
+    """Initialization of the server from command line, taking various arguments, type -h for help"""
+    PARSER = argparse.ArgumentParser(description='Example bot launcher')
+    PARSER.add_argument('--port', help='port to serve on', type=int,
+                        default=5000)
+    PARSER.add_argument('--hmac-key', help='HMAC-SHA256 secret')
+    
+    PARSER_ARGS = PARSER.parse_args()
+
+    APP = Flask(__name__)
+    API = Api(APP)
+    API.add_resource(ColourBot, '/')
+    
+    APP.run(host='0.0.0.0', debug=True, port=PARSER_ARGS.port)
